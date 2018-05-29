@@ -5,6 +5,8 @@ import com.jr.renderer.vectormath.VectorF;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
@@ -33,6 +35,11 @@ public class Renderer  extends JPanel {
 
         renderedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         fillCanvas(Color.BLACK);
+
+        // Keyboard listener
+        KeyListener listener = new MyKeyListener();
+        addKeyListener(listener);
+        setFocusable(true);
     }
 
     public Dimension getPreferredSize() {
@@ -126,10 +133,10 @@ public class Renderer  extends JPanel {
 
     private void triangle(VectorF points[], RenderingContext ctx, Shader fragmentShader, float[] zbuffer) {
         VectorF[] rounded = Arrays.stream(points).map(VectorF::round).toArray(VectorF[]::new);
-        Arrays.sort(rounded, (v1, v2) -> v1.getX() < v2.getX() ? -1 : v1.getX() == v2.getX() ? 0 : 1);
+        Arrays.sort(rounded, (v1, v2) -> Float.compare(v1.getX(), v2.getX()));
         int minX = (int) Math.max(rounded[0].getX(), 0);
         int maxX = (int) Math.min(rounded[2].getX(), outWidth - 1);
-        Arrays.sort(rounded, (v1, v2) -> v1.getY() < v2.getY() ? -1 : v1.getY() == v2.getY() ? 0 : 1);
+        Arrays.sort(rounded, (v1, v2) -> Float.compare(v1.getY(), v2.getY()));
         int minY = (int) Math.max(rounded[0].getY(), 0);
         int maxY = (int) Math.min(rounded[2].getY(), outHeight - 1);
         for (int x = minX; x <= maxX; x++) {
@@ -159,6 +166,21 @@ public class Renderer  extends JPanel {
         renderedImage.setRGB(x, y, color.getRGB());
     }
 
+    public class MyKeyListener implements KeyListener {
+        @Override
+        public void keyTyped(KeyEvent e) {
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            System.out.println("keyReleased="+KeyEvent.getKeyText(e.getKeyCode()));
+        }
+    }
 }
 
 class GouraudShader implements Shader {
@@ -199,4 +221,5 @@ class GouraudShader implements Shader {
         }
         return new Color(round(c.getRed() * intensity), round(c.getGreen() * intensity), round(c.getBlue() * intensity));
     }
+
 }
