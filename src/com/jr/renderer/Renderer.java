@@ -167,7 +167,12 @@ public class Renderer extends JPanel {
     }
 
     public void addToСameraLocation(VectorF v) {
-        System.out.println("keyPressed=" + v);
+        System.out.println("before=" + cameraLocation);
+        cameraLocation = cameraLocation.add(v);
+        System.out.println("after=" + cameraLocation);
+        fillCanvas(Color.BLACK);
+        render();
+        repaint();
     };
 
     public class MyKeyListener implements KeyListener {
