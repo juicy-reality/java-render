@@ -19,7 +19,7 @@ import static java.lang.Math.round;
  */
 public class Renderer extends JPanel {
     public int outWidth, outHeight;
-    public VectorF lookAt, cameraLocation, cameraUp;
+    public VectorF cameraLocation, cameraUp,cameraDirection;
     public VectorF lightDirection;
     private Model model;
     private BufferedImage renderedImage;
@@ -28,7 +28,7 @@ public class Renderer extends JPanel {
         this.model = model;
         outWidth = width;
         outHeight = height;
-        lookAt = new VectorF(0, 0, 0);
+        cameraDirection = new VectorF(-0, -0, -3);
         cameraLocation = new VectorF(1, 1, 3);
         cameraUp = new VectorF(0, 1, 0);
         lightDirection = new VectorF(-1, -1, -1);
@@ -62,10 +62,11 @@ public class Renderer extends JPanel {
         repaint();
     }
 
+
     public void render() {
-        Matrix lookAt = lookAt(cameraLocation, this.lookAt, cameraUp);
+        Matrix lookAt = createlLookAt(cameraLocation, cameraDirection, cameraUp);
         Matrix viewport = viewport(outWidth / 8, outHeight / 8, outWidth * 3 / 4, outHeight * 3 / 4);
-        Matrix projection = projection(-1.f / cameraLocation.sub(this.lookAt).length());
+        Matrix projection = projection(-1.f / cameraLocation.sub(cameraDirection).length());
         RenderingContext ctx = new RenderingContext(viewport, projection, lookAt);
         ctx.setLightingDir(lightDirection.normalize());
         ctx.setModel(model);
@@ -104,7 +105,9 @@ public class Renderer extends JPanel {
         return projection;
     }
 
-    private Matrix lookAt(VectorF cameraLocation, VectorF lookAt, VectorF up) {
+    private Matrix createlLookAt(VectorF cameraLocation, VectorF cameraDirection, VectorF up) {
+        VectorF lookAt = cameraLocation.add(cameraDirection);
+
         VectorF z = cameraLocation.sub(lookAt).normalize();
         VectorF x = up.cross(z).normalize();
         VectorF y = z.cross(x).normalize();
