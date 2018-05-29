@@ -3,6 +3,7 @@ package com.jr.renderer;
 import com.jr.renderer.vectormath.Matrix;
 import com.jr.renderer.vectormath.VectorF;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -14,25 +15,44 @@ import static java.lang.Math.round;
  * @author <a href="mailto:dimaopen@gmail.com">Dmitry Openkov</a>
  *         Created 19.01.16.
  */
-public class Renderer {
+public class Renderer  extends JPanel {
     public int outWidth, outHeight;
     public VectorF lookAt, cameraLocation, cameraUp;
     public VectorF lightDirection;
     private Model model;
     private BufferedImage renderedImage;
 
-    public Renderer(Model model) {
+    public Renderer(Model model, int width, int height) {
         this.model = model;
-        outWidth = 800;
-        outHeight = 800;
+        outWidth = width;
+        outHeight = height;
         lookAt = new VectorF(0, 0, 0);
         cameraLocation = new VectorF(1, 1, 3);
         cameraUp = new VectorF(0, 1, 0);
         lightDirection = new VectorF(-1, -1, -1);
+
+        renderedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        fillCanvas(Color.BLACK);
     }
 
-    public BufferedImage getRenderedImage() {
-        return renderedImage;
+    public Dimension getPreferredSize() {
+        return new Dimension(renderedImage.getWidth(), renderedImage.getHeight());
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.drawImage(renderedImage, null, null);
+    }
+
+    public void fillCanvas(Color c) {
+        int color = c.getRGB();
+        for (int x = 0; x < renderedImage.getWidth(); x++) {
+            for (int y = 0; y < renderedImage.getHeight(); y++) {
+                renderedImage.setRGB(x, y, color);
+            }
+        }
+        repaint();
     }
 
     public void render() {
