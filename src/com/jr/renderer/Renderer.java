@@ -56,10 +56,6 @@ public class Renderer  extends JPanel {
     }
 
     public void render() {
-        if (renderedImage == null || renderedImage.getWidth() != outWidth || renderedImage.getHeight() != outHeight) {
-            renderedImage = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_INT_RGB);
-        }
-
         Matrix lookAt = lookAt(cameraLocation, this.lookAt, cameraUp);
         Matrix viewport = viewport(outWidth / 8, outHeight / 8, outWidth * 3 / 4, outHeight * 3 / 4);
         Matrix projection = projection(-1.f / cameraLocation.sub(this.lookAt).length());
