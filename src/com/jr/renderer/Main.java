@@ -27,18 +27,18 @@ public class Main {
             System.exit(1);
             return;
         }
-        Renderer renderer = new Renderer(model);
-        renderer.render();
-        BufferedImage img = renderer.getRenderedImage();
-        File outputfile = new File("result.png");
-        System.out.println("Writing result to " + outputfile.getAbsolutePath());
-
-        try {
-            ImageIO.write(img, "png", outputfile);
-        } catch (IOException e) {
-            System.err.println("Cannot write file " + outputfile.getAbsolutePath());
-            System.err.println(e.getMessage());
-            System.exit(2);
-        }
+//        RendererOld renderer = new RendererOld(model);
+//        renderer.render();
+//        BufferedImage img = renderer.getRenderedImage();
+//        File outputfile = new File("result.png");
+//        System.out.println("Writing result to " + outputfile.getAbsolutePath());
+//
+//        try {
+//            ImageIO.write(img, "png", outputfile);
+//        } catch (IOException e) {
+//            System.err.println("Cannot write file " + outputfile.getAbsolutePath());
+//            System.err.println(e.getMessage());
+//            System.exit(2);
+//        }
     }
 }
