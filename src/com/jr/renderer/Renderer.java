@@ -17,7 +17,7 @@ import static java.lang.Math.round;
  * @author <a href="mailto:dimaopen@gmail.com">Dmitry Openkov</a>
  *         Created 19.01.16.
  */
-public class Renderer  extends JPanel {
+public class Renderer extends JPanel {
     public int outWidth, outHeight;
     public VectorF lookAt, cameraLocation, cameraUp;
     public VectorF lightDirection;
@@ -37,7 +37,7 @@ public class Renderer  extends JPanel {
         fillCanvas(Color.BLACK);
 
         // Keyboard listener
-        KeyListener listener = new MyKeyListener();
+        KeyListener listener = new MyKeyListener(this);
         addKeyListener(listener);
         setFocusable(true);
     }
@@ -166,19 +166,35 @@ public class Renderer  extends JPanel {
         renderedImage.setRGB(x, y, color.getRGB());
     }
 
+    public void addToСameraLocation(VectorF v) {
+        System.out.println("keyPressed=" + v);
+    };
+
     public class MyKeyListener implements KeyListener {
+
+        public final static float STEP_SIZE = (float) 0.1;
+
+        Renderer camera;
+
+        public MyKeyListener(Renderer renderer) {
+            this.camera = renderer;
+        }
         @Override
         public void keyTyped(KeyEvent e) {
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
+            switch (KeyEvent.getKeyText(e.getKeyCode())) {
+                case "W": camera.addToСameraLocation(new VectorF(0, 0, STEP_SIZE));
+                    break;
+                default:
+                    break;
+            }
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            System.out.println("keyReleased="+KeyEvent.getKeyText(e.getKeyCode()));
         }
     }
 }
