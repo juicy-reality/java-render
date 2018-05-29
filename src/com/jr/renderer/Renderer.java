@@ -177,7 +177,7 @@ public class Renderer extends JPanel {
 
     public class MyKeyListener implements KeyListener {
 
-        public final static float STEP_SIZE = (float) 0.1;
+        public final static float STEP_SIZE = (float) 0.3;
 
         Renderer camera;
 
