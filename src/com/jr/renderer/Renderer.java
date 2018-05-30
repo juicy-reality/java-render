@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
@@ -28,7 +29,7 @@ public class Renderer extends JPanel {
         this.model = model;
         outWidth = width;
         outHeight = height;
-        cameraDirection = new VectorF(-0, -0, -3);
+        cameraDirection = new VectorF(-1, -1, -3);
         cameraLocation = new VectorF(1, 1, 3);
         cameraUp = new VectorF(0, 1, 0);
         lightDirection = new VectorF(-1, -1, -1);
