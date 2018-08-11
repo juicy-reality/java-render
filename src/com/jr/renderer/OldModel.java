@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:dimaopen@gmail.com">Dmitry Openkov</a>
  *         Created 19.01.16.
  */
-public class Model {
+public class OldModel {
     public class Vertex {
 
         public VectorF location;
@@ -30,7 +30,7 @@ public class Model {
     private List<Vertex[]> faces;
     private BufferedImage diffuse;
     private BufferedImage specular;
-    public Model() {
+    public OldModel() {
         faces = new ArrayList<>(1024);
     }
 

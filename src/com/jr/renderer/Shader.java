@@ -9,7 +9,7 @@ import java.awt.Color;
  *         Created 31.01.16.
  */
 public interface Shader {
-    VectorF vertex(RenderingContext ctx, Model.Vertex vertex, int vertexNum);
+    VectorF vertex(RenderingContext ctx, OldModel.Vertex vertex, int vertexNum);
 
     Color fragment(RenderingContext ctx, VectorF barycentric);
 

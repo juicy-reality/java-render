@@ -13,9 +13,9 @@ public class Main {
 
     public static void main(String[] args) {
         Path path = Paths.get("/home/denys/projects/jr/renderer/resources/african_head.obj");
-        Model model = new Model();
+        OldModel oldModel = new OldModel();
         try {
-            model.loadData(path);
+            oldModel.loadData(path);
         } catch (FileNotFoundException e) {
             System.err.println("Cannot find file " + args[0]);
             System.exit(1);
@@ -26,7 +26,7 @@ public class Main {
         int height = 800;
         JFrame frame = new JFrame("Juicy reality demo");
 
-        Renderer renderer = new Renderer(model, width, height);
+        Renderer renderer = new Renderer(oldModel, width, height);
         renderer.render();
 
         frame.add(renderer);

@@ -22,11 +22,11 @@ public class Renderer extends JPanel {
     public int outWidth, outHeight;
     public Camera camera;
     public VectorF lightDirection;
-    private Model model;
+    private OldModel oldModel;
     private BufferedImage renderedImage;
 
-    public Renderer(Model model, int width, int height) {
-        this.model = model;
+    public Renderer(OldModel oldModel, int width, int height) {
+        this.oldModel = oldModel;
         outWidth = width;
         outHeight = height;
         camera = new Camera();
@@ -66,11 +66,11 @@ public class Renderer extends JPanel {
         Matrix viewport = viewport(outWidth / 8, outHeight / 8, outWidth * 3 / 4, outHeight * 3 / 4);
         RenderingContext ctx = new RenderingContext(viewport, camera.getProjection(), camera.getLookAt());
         ctx.setLightingDir(lightDirection.normalize());
-        ctx.setModel(model);
+        ctx.setOldModel(oldModel);
 
         Shader shader = new GouraudShader();
         float[] zbuffer = createZBuffer();
-        for (Model.Vertex[] face : model.getFaces()) {
+        for (OldModel.Vertex[] face : oldModel.getFaces()) {
             VectorF[] screenCoord = new VectorF[3];
             for (int i = 0; i < 3; i++) {
                 screenCoord[i] = shader.vertex(ctx, face[i], i);
@@ -221,7 +221,7 @@ class GouraudShader implements Shader {
     private Matrix normalMatrix = new Matrix(3, 3);
 
     @Override
-    public VectorF vertex(RenderingContext ctx, Model.Vertex vertex, int vertexNum) {
+    public VectorF vertex(RenderingContext ctx, OldModel.Vertex vertex, int vertexNum) {
         varying_intencity[vertexNum] = vertex.normal.dot(ctx.getLightingDir());
         varying_uv.setCol(vertexNum, vertex.uv);
         normalMatrix.setCol(vertexNum, vertex.normal);
@@ -241,8 +241,8 @@ class GouraudShader implements Shader {
         VectorF n = normalMatrix.mul(bc);
         VectorF l = ctx.getLightingDir().scale(-1);
         VectorF reflectedLight = n.scale(n.dot(l) * 2 ).sub(l).normalize();
-        Color c = ctx.getModel().getDiffuse(uv);
-        float spec = (float) Math.pow(reflectedLight.getZ(), ctx.getModel().getSecular(uv));
+        Color c = ctx.getOldModel().getDiffuse(uv);
+        float spec = (float) Math.pow(reflectedLight.getZ(), ctx.getOldModel().getSecular(uv));
         if (spec < 0) {
             spec = 0;
         }
