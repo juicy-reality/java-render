@@ -14,15 +14,15 @@ public class Camera {
 
     public float coeff;
     public Camera() {
-        location = new VectorF(0, 0, -1);
-        forward = new VectorF(0, 0, 1);
+        location = new VectorF(0, 0, 1);
+        forward = new VectorF(0, 0, -1);
         right = new VectorF(1,0,0);
         up = new VectorF(0, 1, 0);
         coeff = -1.f / 2;
     }
 
     public Matrix getLookAt() {
-        VectorF z = forward.normalize();
+        VectorF z = forward.scale(-1).normalize();
         VectorF x = up.cross(z).normalize();
         VectorF y = z.cross(x).normalize();
 
@@ -32,7 +32,7 @@ public class Camera {
             Minv.set(0, i, x.getComponent(i));
             Minv.set(1, i, y.getComponent(i));
             Minv.set(2, i, z.getComponent(i));
-            Tr.set(i, 3, -location.getComponent(i));
+            Tr.set(i, 3, -location.add(forward).getComponent(i));
         }
         return Minv.mul(Tr);
     }
@@ -44,7 +44,7 @@ public class Camera {
     }
 
     public void move(float right, float top, float forward) {
-        VectorF v = this.forward.scale(-forward);
+        VectorF v = this.forward.scale(forward);
         v = v.add(this.right.scale(-right));
         v = v.add(this.up.scale(-top));
         location = location.add(v.scale(STEP_SIZE));
