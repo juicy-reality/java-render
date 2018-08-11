@@ -54,7 +54,7 @@ public class Camera {
         Matrix m = new Matrix(r, 3);
         forward = m.mul(forward);
         up = m.mul(up);
-        right = m.mul(up);
+        right = m.mul(right);
     }
 
     public void rotateX(float ang) {
@@ -64,6 +64,28 @@ public class Camera {
              1, 0, 0,
              0, c, -s,
              0, s, c
+        };
+        rotate(r);
+    }
+
+    public void rotateY(float ang) {
+        float s = (float) Math.sin(ang * ROTATION_SIZE);
+        float c = (float) Math.cos(ang * ROTATION_SIZE);
+        float[] r = {
+                c, 0, s,
+                0, 1, 0,
+                -s, 0, c
+        };
+        rotate(r);
+    }
+
+    public void rotateZ(float ang) {
+        float s = (float) Math.sin(ang * ROTATION_SIZE);
+        float c = (float) Math.cos(ang * ROTATION_SIZE);
+        float[] r = {
+                c, -s, 0,
+                s, c, 0,
+                0, 0, 1
         };
         rotate(r);
     }

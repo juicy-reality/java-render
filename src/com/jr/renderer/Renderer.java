@@ -184,10 +184,22 @@ public class Renderer extends JPanel {
                     camera.move(0,-1,0);
                     break;
                 case "J":
-                    camera.rotateX(1);
+                    camera.rotateY(-1);
                     break;
                 case "L":
+                    camera.rotateY(1);
+                    break;
+                case "I":
                     camera.rotateX(-1);
+                    break;
+                case "K":
+                    camera.rotateX(1);
+                    break;
+                case "U":
+                    camera.rotateZ(-1);
+                    break;
+                case "O":
+                    camera.rotateZ(1);
                     break;
                 default:
                     break;
