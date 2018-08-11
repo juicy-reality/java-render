@@ -12,7 +12,7 @@ import java.nio.file.Path;
 public class Main {
 
     public static void main(String[] args) {
-        Path path = Paths.get("/home/denys/IdeaProjects/java-render/resources/african_head.obj");
+        Path path = Paths.get("/home/denys/projects/jr/renderer/resources/african_head.obj");
         Model model = new Model();
         try {
             model.loadData(path);

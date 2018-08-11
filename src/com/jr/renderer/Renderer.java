@@ -15,12 +15,12 @@ import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
 /**
- * @author <a href="mailto:dimaopen@gmail.com">Dmitry Openkov</a>
- *         Created 19.01.16.
+ * @author denys
+ *
  */
 public class Renderer extends JPanel {
     public int outWidth, outHeight;
-    public VectorF cameraLocation, cameraUp,cameraDirection;
+    public Camera camera;
     public VectorF lightDirection;
     private Model model;
     private BufferedImage renderedImage;
@@ -29,9 +29,7 @@ public class Renderer extends JPanel {
         this.model = model;
         outWidth = width;
         outHeight = height;
-        cameraDirection = new VectorF(-1, -1, -3);
-        cameraLocation = new VectorF(1, 1, 3);
-        cameraUp = new VectorF(0, 1, 0);
+        camera = new Camera();
         lightDirection = new VectorF(-1, -1, -1);
 
         renderedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -65,10 +63,8 @@ public class Renderer extends JPanel {
 
 
     public void render() {
-        Matrix lookAt = createlLookAt(cameraLocation, cameraDirection, cameraUp);
         Matrix viewport = viewport(outWidth / 8, outHeight / 8, outWidth * 3 / 4, outHeight * 3 / 4);
-        Matrix projection = projection(-1.f / cameraLocation.sub(cameraDirection).length());
-        RenderingContext ctx = new RenderingContext(viewport, projection, lookAt);
+        RenderingContext ctx = new RenderingContext(viewport, camera.getProjection(), camera.getLookAt());
         ctx.setLightingDir(lightDirection.normalize());
         ctx.setModel(model);
 
@@ -100,27 +96,9 @@ public class Renderer extends JPanel {
         return viewportMatrix;
     }
 
-    private Matrix projection(float coeff) {
-        Matrix projection = Matrix.identity(4);
-        projection.set(3, 2, coeff);
-        return projection;
-    }
 
-    private Matrix createlLookAt(VectorF cameraLocation, VectorF cameraDirection, VectorF up) {
-        VectorF lookAt = cameraLocation.add(cameraDirection);
 
-        VectorF z = cameraLocation.sub(lookAt).normalize();
-        VectorF x = up.cross(z).normalize();
-        VectorF y = z.cross(x).normalize();
-        Matrix modelView = Matrix.identity(4);
-        for (int i = 0; i < 3; i++) {
-            modelView.set(0, i, x.getComponent(i));
-            modelView.set(1, i, y.getComponent(i));
-            modelView.set(2, i, z.getComponent(i));
-            modelView.set(i, 3, -lookAt.getComponent(i));
-        }
-        return modelView;
-    }
+
 
     VectorF barycentric(VectorF A, VectorF B, VectorF C, VectorF P) {
         VectorF s0 = new VectorF(C.getX() - A.getX(), B.getX() - A.getX(), A.getX() - P.getX());
@@ -170,23 +148,15 @@ public class Renderer extends JPanel {
         renderedImage.setRGB(x, y, color.getRGB());
     }
 
-    public void addToСameraLocation(VectorF v) {
-        System.out.println("before=" + cameraLocation);
-        cameraLocation = cameraLocation.add(v);
-        System.out.println("after=" + cameraLocation);
-        fillCanvas(Color.BLACK);
-        render();
-        repaint();
-    };
-
     public class MyKeyListener implements KeyListener {
 
-        public final static float STEP_SIZE = (float) 0.3;
 
-        Renderer camera;
+        Renderer renderer;
+        Camera camera;
 
         public MyKeyListener(Renderer renderer) {
-            this.camera = renderer;
+            this.camera = renderer.camera;
+            this.renderer = renderer;
         }
         @Override
         public void keyTyped(KeyEvent e) {
@@ -195,11 +165,15 @@ public class Renderer extends JPanel {
         @Override
         public void keyPressed(KeyEvent e) {
             switch (KeyEvent.getKeyText(e.getKeyCode())) {
-                case "W": camera.addToСameraLocation(new VectorF(0, 0, STEP_SIZE));
+                case "W":
+                    camera.move(0,0,1);
                     break;
                 default:
                     break;
             }
+            fillCanvas(Color.BLACK);
+            renderer.render();
+            renderer.repaint();
         }
 
         @Override
