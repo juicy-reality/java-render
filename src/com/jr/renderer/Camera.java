@@ -22,19 +22,19 @@ public class Camera {
     }
 
     public Matrix getLookAt() {
-        VectorF lookAt = location.add(forward);
-
         VectorF z = forward.normalize();
         VectorF x = up.cross(z).normalize();
         VectorF y = z.cross(x).normalize();
-        Matrix modelView = Matrix.identity(4);
+
+        Matrix Minv = Matrix.identity(4);
+        Matrix Tr = Matrix.identity(4);
         for (int i = 0; i < 3; i++) {
-            modelView.set(0, i, x.getComponent(i));
-            modelView.set(1, i, y.getComponent(i));
-            modelView.set(2, i, z.getComponent(i));
-            modelView.set(i, 3, -lookAt.getComponent(i));
+            Minv.set(0, i, x.getComponent(i));
+            Minv.set(1, i, y.getComponent(i));
+            Minv.set(2, i, z.getComponent(i));
+            Tr.set(i, 3, -location.getComponent(i));
         }
-        return modelView;
+        return Minv.mul(Tr);
     }
 
     public Matrix getProjection() {
@@ -45,9 +45,11 @@ public class Camera {
 
     public void move(float right, float top, float forward) {
         VectorF v = this.forward.scale(-forward);
-        v = v.add(this.right.scale(right));
-        v = v.add(this.up.scale(top));
+        v = v.add(this.right.scale(-right));
+        v = v.add(this.up.scale(-top));
         location = location.add(v.scale(STEP_SIZE));
+
+        System.out.println("location = " + location);
     }
 
     public void rotate(float[] r){
@@ -55,6 +57,8 @@ public class Camera {
         forward = m.mul(forward);
         up = m.mul(up);
         right = m.mul(right);
+
+        System.out.println("forward = " + forward);
     }
 
     public void rotateX(float ang) {
