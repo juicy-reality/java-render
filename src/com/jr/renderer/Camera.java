@@ -7,21 +7,24 @@ import com.jr.renderer.vectormath.VectorF;
  * Created by denys on 11.08.18.
  */
 public class Camera {
-    public VectorF cameraLocation, cameraUp,cameraDirection;
+    public VectorF location, up, forward, right;
 
     public final static float STEP_SIZE = (float) 0.3;
 
+    public float coeff;
     public Camera() {
-        cameraDirection = new VectorF(-1, -1, -3);
-        cameraLocation = new VectorF(1, 1, 3);
-        cameraUp = new VectorF(0, 1, 0);
+        location = new VectorF(0, 0, -1);
+        forward = new VectorF(0, 0, 1);
+        right = new VectorF(1,0,0);
+        up = new VectorF(0, 1, 0);
+        coeff = -1.f / 2;
     }
 
     public Matrix getLookAt() {
-        VectorF lookAt = cameraLocation.add(cameraDirection);
+        VectorF lookAt = location.add(forward);
 
-        VectorF z = cameraLocation.sub(lookAt).normalize();
-        VectorF x = cameraUp.cross(z).normalize();
+        VectorF z = forward.normalize();
+        VectorF x = up.cross(z).normalize();
         VectorF y = z.cross(x).normalize();
         Matrix modelView = Matrix.identity(4);
         for (int i = 0; i < 3; i++) {
@@ -34,14 +37,15 @@ public class Camera {
     }
 
     public Matrix getProjection() {
-        float coeff = -1.f / cameraLocation.sub(cameraDirection).length();
         Matrix projection = Matrix.identity(4);
         projection.set(3, 2, coeff);
         return projection;
     }
 
     public void move(float right, float top, float forward) {
-        VectorF v =  new VectorF(right, top, forward);
-        cameraLocation = cameraLocation.add(v.scale(STEP_SIZE));
+        VectorF v = this.forward.scale(-forward);
+        v = v.add(this.right.scale(right));
+        v = v.add(this.up.scale(top));
+        location = location.add(v.scale(STEP_SIZE));
     }
 }

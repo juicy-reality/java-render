@@ -168,6 +168,21 @@ public class Renderer extends JPanel {
                 case "W":
                     camera.move(0,0,1);
                     break;
+                case "S":
+                    camera.move(0,0,-1);
+                    break;
+                case "A":
+                    camera.move(1,0,0);
+                    break;
+                case "D":
+                    camera.move(-1,0,0);
+                    break;
+                case "Q":
+                    camera.move(0,1,0);
+                    break;
+                case "E":
+                    camera.move(0,-1,0);
+                    break;
                 default:
                     break;
             }
