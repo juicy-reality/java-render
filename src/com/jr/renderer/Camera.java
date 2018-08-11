@@ -10,6 +10,7 @@ public class Camera {
     public VectorF location, up, forward, right;
 
     public final static float STEP_SIZE = (float) 0.3;
+    public final static float ROTATION_SIZE = (float) Math.PI / 20;
 
     public float coeff;
     public Camera() {
@@ -47,5 +48,23 @@ public class Camera {
         v = v.add(this.right.scale(right));
         v = v.add(this.up.scale(top));
         location = location.add(v.scale(STEP_SIZE));
+    }
+
+    public void rotate(float[] r){
+        Matrix m = new Matrix(r, 3);
+        forward = m.mul(forward);
+        up = m.mul(up);
+        right = m.mul(up);
+    }
+
+    public void rotateX(float ang) {
+        float s = (float) Math.sin(ang * ROTATION_SIZE);
+        float c = (float) Math.cos(ang * ROTATION_SIZE);
+        float[] r = {
+             1, 0, 0,
+             0, c, -s,
+             0, s, c
+        };
+        rotate(r);
     }
 }
