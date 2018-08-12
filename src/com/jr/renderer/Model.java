@@ -75,4 +75,8 @@ public class Model {
             }
         }
     }
+
+    public List<Vertex[]> getFaces() {
+        return faces;
+    }
 }

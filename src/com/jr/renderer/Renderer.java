@@ -3,6 +3,7 @@ package com.jr.renderer;
 import com.jr.renderer.vectormath.Matrix;
 import com.jr.renderer.vectormath.VectorF;
 
+import javax.jws.WebParam;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -22,11 +23,11 @@ public class Renderer extends JPanel {
     public int outWidth, outHeight;
     public Camera camera;
     public VectorF lightDirection;
-    private OldModel oldModel;
+    private Model model;
     private BufferedImage renderedImage;
 
-    public Renderer(OldModel oldModel, int width, int height) {
-        this.oldModel = oldModel;
+    public Renderer(Model model, int width, int height) {
+        this.model = model;
         outWidth = width;
         outHeight = height;
         camera = new Camera();
@@ -66,16 +67,16 @@ public class Renderer extends JPanel {
         Matrix viewport = viewport(outWidth / 8, outHeight / 8, outWidth * 3 / 4, outHeight * 3 / 4);
         RenderingContext ctx = new RenderingContext(viewport, camera.getProjection(), camera.getLookAt());
         ctx.setLightingDir(lightDirection.normalize());
-        ctx.setOldModel(oldModel);
+        ctx.setModel(model);
 
-        Shader shader = new GouraudShader();
+        Shader shader = new SimpleShader();
         float[] zbuffer = createZBuffer();
-        for (OldModel.Vertex[] face : oldModel.getFaces()) {
+        for (Model.Vertex[] face : model.getFaces()) {
             VectorF[] screenCoord = new VectorF[3];
             for (int i = 0; i < 3; i++) {
                 screenCoord[i] = shader.vertex(ctx, face[i], i);
             }
-            triangle(screenCoord, ctx, shader, zbuffer);
+            triangle(screenCoord, ctx, shader, zbuffer, face[0].color);
         }
     }
 
@@ -113,7 +114,7 @@ public class Renderer extends JPanel {
         return new VectorF(-1, 1, 1);
     }
 
-    private void triangle(VectorF points[], RenderingContext ctx, Shader fragmentShader, float[] zbuffer) {
+    private void triangle(VectorF points[], RenderingContext ctx, Shader fragmentShader, float[] zbuffer, Color color) {
         VectorF[] rounded = Arrays.stream(points).map(VectorF::round).toArray(VectorF[]::new);
         Arrays.sort(rounded, (v1, v2) -> Float.compare(v1.getX(), v2.getX()));
         int minX = (int) Math.max(rounded[0].getX(), 0);
@@ -131,7 +132,7 @@ public class Renderer extends JPanel {
                 int idx = x + y * outWidth;
                 if (c.getX() < 0 || c.getY() < 0 || c.getZ() < 0 || zbuffer[idx] >= z) continue;
                 zbuffer[idx] = z;
-                Color color = fragmentShader.fragment(ctx, c);
+
                 if (color != null) {
                     setPixel(x, y, color);
                 }
@@ -215,16 +216,9 @@ public class Renderer extends JPanel {
     }
 }
 
-class GouraudShader implements Shader {
-    private Matrix varying_uv = new Matrix(2, 3);
-    private float[] varying_intencity = new float[3];
-    private Matrix normalMatrix = new Matrix(3, 3);
-
+class SimpleShader implements Shader {
     @Override
-    public VectorF vertex(RenderingContext ctx, OldModel.Vertex vertex, int vertexNum) {
-        varying_intencity[vertexNum] = vertex.normal.dot(ctx.getLightingDir());
-        varying_uv.setCol(vertexNum, vertex.uv);
-        normalMatrix.setCol(vertexNum, vertex.normal);
+    public VectorF vertex(RenderingContext ctx, Model.Vertex vertex, int vertexNum) {
         VectorF gl_Vertex = vertex.location.embedded();
         gl_Vertex = ctx.getTransform().mul(gl_Vertex);     // transform it to screen coordinates
         float lastComp = gl_Vertex.getComponent(gl_Vertex.getNumberOfComponents() - 1);
@@ -233,25 +227,7 @@ class GouraudShader implements Shader {
 
     @Override
     public Color fragment(RenderingContext ctx, VectorF bc) {
-        float diffuse = new VectorF(varying_intencity).dot(bc);
-        if (diffuse < 0) {
-            diffuse = 0;
-        }
-        VectorF uv = varying_uv.mul(bc);
-        VectorF n = normalMatrix.mul(bc);
-        VectorF l = ctx.getLightingDir().scale(-1);
-        VectorF reflectedLight = n.scale(n.dot(l) * 2 ).sub(l).normalize();
-        Color c = ctx.getOldModel().getDiffuse(uv);
-        float spec = (float) Math.pow(reflectedLight.getZ(), ctx.getOldModel().getSecular(uv));
-        if (spec < 0) {
-            spec = 0;
-        }
-        float ambient = .1f;
-        float intensity = ambient + .8f * diffuse + .2f * spec;
-        if (intensity > 1) {
-            intensity = 1;
-        }
-        return new Color(round(c.getRed() * intensity), round(c.getGreen() * intensity), round(c.getBlue() * intensity));
+        return Color.BLACK;
     }
 
 }

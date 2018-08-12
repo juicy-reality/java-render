@@ -13,23 +13,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-
-        OldModel oldModel = new OldModel();
-
-        try {
-            Path path = Paths.get("/home/denys/projects/jr/renderer/resources/african_head.obj");
-            oldModel.loadData(path);
-        } catch (FileNotFoundException e) {
-            System.err.println("Cannot find file " + args[0]);
-            System.exit(1);
-            return;
-        }
-
         Model model;
         try {
-            Path depthPath = Paths.get("/home/denys/projects/jr/renderer/resources/040407_depth.png");
             Path colorPath = Paths.get("/home/denys/projects/jr/renderer/resources/040407_color.png");
-            model = new Model(depthPath, colorPath);
+            Path depthPath = Paths.get("/home/denys/projects/jr/renderer/resources/040407_depth.png");
+            model = new Model(colorPath, depthPath);
         } catch (FileNotFoundException e) {
             System.err.println("Cannot find file " + args[0]);
             System.exit(1);
@@ -39,7 +27,7 @@ public class Main {
         int height = 800;
         JFrame frame = new JFrame("Juicy reality demo");
 
-        Renderer renderer = new Renderer(oldModel, width, height);
+        Renderer renderer = new Renderer(model, width, height);
         renderer.render();
 
         frame.add(renderer);

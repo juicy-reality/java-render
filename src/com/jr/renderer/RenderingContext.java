@@ -13,7 +13,7 @@ public class RenderingContext {
     private Matrix modelView;
     private Matrix transform;
     private VectorF lightingDir;
-    private OldModel oldModel;
+    private Model model;
 
     public RenderingContext(Matrix viewportMatrix, Matrix projection, Matrix modelView) {
         this.viewportMatrix = viewportMatrix;
@@ -46,11 +46,11 @@ public class RenderingContext {
         this.lightingDir = lightingDir;
     }
 
-    public OldModel getOldModel() {
-        return oldModel;
+    public Model getModel() {
+        return model;
     }
 
-    public void setOldModel(OldModel oldModel) {
-        this.oldModel = oldModel;
+    public void setModel(Model model) {
+        this.model = model;
     }
 }
