@@ -53,8 +53,11 @@ public class Model {
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 float x = (float) i * 2 / w - 1;
-                float y = (float) j * 2 / h - 1;
-                vectors[j * w + i] = new VectorF(x, y, 0.0f);
+                float y = (float) h / w - (float) j * 2 / w; // TODO not sure it is right
+
+                Color d = new Color(depth.getRGB(i, j));
+                float z = d.getRed() + d.getGreen() * 255f;
+                vectors[j * w + i] = new VectorF(x, y, -z/ 2500);
             }
         }
 
