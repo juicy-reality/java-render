@@ -51,10 +51,10 @@ public class Model {
         // get vectors
         final VectorF[] vectors = new VectorF[h * w];
         for (int i = 0; i < w; i++) {
-            for (int j = 0; j <= h; j++) {
+            for (int j = 0; j < h; j++) {
                 float x = (float) i * 2 / w - 1;
-                float y = (float) i * 2 / h - 1;
-                vectors[i * w + j] = new VectorF(x, y, 0.0f);
+                float y = (float) j * 2 / h - 1;
+                vectors[j * w + i] = new VectorF(x, y, 0.0f);
             }
         }
 
