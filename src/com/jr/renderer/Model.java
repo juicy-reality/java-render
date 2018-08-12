@@ -57,7 +57,8 @@ public class Model {
 
                 Color d = new Color(depth.getRGB(i, j));
                 float z = d.getRed() + d.getGreen() * 255f;
-                vectors[j * w + i] = new VectorF(x, y, -z/ 2500);
+                z = z / 5000;
+                vectors[j * w + i] = new VectorF(x * z, y * z, z);
             }
         }
 
